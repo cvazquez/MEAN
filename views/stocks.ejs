@@ -1,0 +1,22 @@
+<h1><%= title %></h1>
+
+
+<% form_for("stock", function(f){ %>
+
+    <%- f.text_field("symbol",{placeholder:"Type company or stock symbol", class:"stockSymbol"}) %>
+
+    <%- f.submit("Retrieve") %><br />
+<% }) %>
+
+
+<div class="sections">
+    <% for(section in sections) { %>
+         <p>
+            <b><a href="<%= sections[section].link %>"> <%= sections[section].name %></a></b><br>
+             <%= sections[section].description %>
+         </p>
+     <% } %>
+</div>
+
+
+<p>{{1+2}}</p>

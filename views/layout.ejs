@@ -1,0 +1,44 @@
+<!DOCTYPE html>  
+<html lang="en" ng-app="carlosApp">  
+  <head>
+    <meta charset="utf-8">
+    <title><% if (showTitle) { %> <%= title %> <% } %></title>    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    
+
+    <% /* <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.2.1/backbone-min.js"></script> */ %>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="stylesheets/carlos.css" rel="stylesheet">
+
+    <% /*
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.4/jasmine.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.4/jasmine.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.4/jasmine-html.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/2.3.4/boot.js"></script>
+    */ %>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.js"></script>
+    <script src="javascripts/carlosControllers.js"></script>
+
+  </head>
+  <body>
+    
+
+    <div class="container-fluid">
+      <div style="width: 100%; text-align:right;">
+        Return to <a href="http://www.carlosvazquez.org/blog/category/Portfolio">CarlosVazquez.org</a> | <a href="/">NodeJS Portfolio</a>
+      </div>
+
+      <%- body %>
+    </div>
+
+    
+  </body>
+</html>  

@@ -1,0 +1,17 @@
+<h1>{{title}}</h1>
+
+
+<h2>{{h2}}</h2>
+
+
+<h3>{{h3}}</h3>
+
+<div id="sections">
+	 {{#each sections}}
+	 	<p>
+	    	<b><a href="{{this.link}}">{{this.name}}</a></b><br>
+	    	 {{this.description}}
+	 	</p>
+	 {{/each}}
+</div>
+

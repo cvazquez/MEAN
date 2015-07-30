@@ -1,0 +1,80 @@
+body {
+  /*padding: 50px;*/
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+/* Override bootstraps style to have no padding in header */
+.container-fluid {
+    padding-right: 0px!important;
+    padding-left: 0px!important;
+}
+
+a {
+  color: #00B7FF;
+}
+
+div#top{
+	width: 100%;
+    background: #EFF2F8 -moz-linear-gradient(center top , #A0ACC8, #FBFCFD) repeat scroll 0% 0%;
+    padding: 10px 20%;
+    border-bottom: 2px solid #FBFCFD;
+}
+
+div#introduction{
+	margin-bottom: 10px;
+}
+
+code#sectionsCode{
+	padding: 0px!important;
+	margin-top: 10px;
+}
+
+
+div#sectionDemo{
+	width: 100%;
+    padding: 10px 20%;	
+}
+
+
+div.sections{
+	padding: 20px;
+	box-shadow: 5px 5px 5px 1px #606680;
+}
+
+.section{
+	padding-bottom: 10px;
+}
+
+li.section{
+	list-style: none;
+}
+
+
+.stockSymbol{
+	width: 232px!important;
+}
+
+#stockSymbol{
+	width: 232px;
+}
+
+table#stockResults, table#stockResults tr, table#stockResults td{
+	border: 1px solid gray;
+	padding: 5px;
+}
+
+table#stockResults .stockResultsHeader{
+	background-color:  #6C7B9D;
+	color: white;
+	text-align: center;
+}
+
+table#stockResults tr:nth-child(2n+3){
+	background-color:  #A0ACC8;
+	color: white;
+}
+
+table#stockResults td:nth-child(2n+2){
+	width: 200px;
+}
+

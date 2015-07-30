@@ -1,0 +1,56 @@
+<div ng-controller="StockController">
+
+	<h1><%= title %></h1>
+
+	<!--http://finance.google.com/finance/info?client=ig&q=AAPL,YHOO-->
+	<% /*form_for("#", function(f){ %>
+
+	    <%- f.text_field("symbol",{placeholder:"Type company or stock symbol", class:"stockSymbol"}) %>
+
+	    <%- f.submit("Retrieve") %><br />
+	<% }) */%>
+
+	<form ng-submit="stockSymbolLookup()">
+	<p>
+	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery">
+	</p>
+	</form>
+
+	<p>You are searching for: {{stockQuery}}</p>
+	
+	<table id="stockResults">
+		<tr class="stockResultsHeader">
+		<td colspan="2">Results</td>
+		</tr>
+		<tr>
+			<td>Name</td>
+			<td>{{stock.name}}</td>
+		</tr>
+		<tr>
+			<td>Symbol</td>
+			<td>{{stock.symbol}}</td>
+		</tr>
+		<tr>
+			<td>Exchange</td>
+			<td>{{stock.exchange}}</td>
+		</tr>
+		<tr>
+			<td>Last Price</td>
+			<td>{{stock.lastPrice}}</td>
+		</tr>
+		
+	</table>
+
+	
+
+
+	<div class="sections">
+	    <% for(section in sections) { %>
+	         <p>
+	            <b><a href="<%= sections[section].link %>"> <%= sections[section].name %></a></b><br>
+	             <%= sections[section].description %>
+	         </p>
+	     <% } %>
+	</div>
+
+</div>

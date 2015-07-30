@@ -1,0 +1,88 @@
+<div ng-controller="CarlosController">
+
+<div id="top">
+  <% if (showTitle) { %>
+  <div class="title">  
+     <h1><%= title %></h1>
+  </div>  
+  <% } %>
+
+
+  <h2><%= h2 %></h2>
+
+  <h3><%= h3 %></h3>
+
+  <div id="introduction">
+    <%= introduction %>
+  </div>
+  
+  <code id="sectionsCode"><pre><%= sectionsCode.replace(/},{/g, "},\n{") %></pre></code>
+
+  <p>See my <a href="https://github.com/cvazquez/MEAN/" target="GitHib">GitHub page for the code</a>.</p>
+</div>
+
+
+<div id="sectionDemo">
+  <div class="sections">
+  	<h4>Using Node.js and ejs</h4>
+
+    <ol>
+      <% for(section in sections) { %>
+           <li class="section">
+              <b><a href="<%= sections[section].link %>"> <%= sections[section].name %></a></b><br>
+               <%= sections[section].description %>
+           </li>
+       <% } %>
+    </ol>
+
+       <p>Sections Length <%= sections.length %></p>
+  </div>
+
+
+  <div class="sections">
+    <h4>Using Angular $http Call and ng-repeat</h4>
+      
+        <ol>
+          <li ng-repeat="section in sectionsHTTPngRepeat" class="section">
+             <b><a href="{{section.link}}"> {{section.name}}</a></b><br>
+              {{section.description}}
+            </li>
+        </ol>
+      
+
+     <p>Sections HTTP Length {{sectionsHTTPngRepeat.length}}</p>
+  </div>
+
+  <div class="sections">
+    <h4>Using Angular Hardcoded sections with ng-repeat</h4>
+      
+        <ol>
+          <li ng-repeat="section in sections"  class="section">
+             <b><a href="{{section.link}}"> {{section.name}}</a></b><br>
+              {{section.description}}
+            </li>
+        </ol>
+      
+
+     <p>Sections HTTP Length {{sections.length}}</p>
+  </div>
+
+
+  <div class="sections">
+  	<h4>Using Angular $http Call (HTML Created in JS with innerHTML)</h4>
+
+  	<div id="sectionsHTTP"></div>
+
+     <p>Sections Length: <span id="sectionsLength"></span></p>
+  </div>
+
+</div>
+
+
+  <div class="sections">
+  	<h4>Random Testing Node.js</h4>
+  	<p>I am <%= age %></p>
+  	<p>Time in MS since 1970: <%= timeInMs %></p>
+  	
+  </div>
+</div>

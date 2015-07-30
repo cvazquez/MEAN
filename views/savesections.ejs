@@ -1,0 +1,40 @@
+<% if (showTitle) { %>
+<div class="title">  
+   <h1><%= title %></h1>
+</div>  
+<% } %>
+
+
+<div class="sections">
+	<h4>Saving these sections into MongoDB</h4>
+
+  <ol>
+    <% for(section in sections) { %>
+         <li class="section">
+            <b><a href="<%= sections[section].link %>"> <%= sections[section].name %></a></b><br>
+             <%= sections[section].description %>
+         </li>
+     <% } %>
+  </ol>
+
+     <p>Sections Length <%= sections.length %></p>
+     
+</div>
+
+
+<div class="sections">
+	<h4>Sections retrieved from MongoDB</h4>
+	<p>sectionCollection Count <%= sectionCollection["count"] %></p>
+
+  <ol>
+    <% for(section in sectionCollection["results"]) { %>
+         <li class="section">
+            <b><a href="<%= sectionCollection["results"][section].link %>"> <%= sectionCollection["results"][section].name %></a></b><br>
+             <%= sectionCollection["results"][section].description %>
+         </li>
+     <% } %>
+  </ol>
+
+     
+
+</div>
