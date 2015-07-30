@@ -1,25 +1,7 @@
 <div ng-controller="CarlosController">
 
-<div id="top">
-  <% if (showTitle) { %>
-  <div class="title">  
-     <h1><%= title %></h1>
-  </div>  
-  <% } %>
+<%- partial('partials/top', {page: page}) %>
 
-
-  <h2><%= h2 %></h2>
-
-  <h3><%= h3 %></h3>
-
-  <div id="introduction">
-    <%= introduction %>
-  </div>
-  
-  <code id="sectionsCode"><pre><%= sectionsCode.replace(/},{/g, "},\n{") %></pre></code>
-
-  <p>See my <a href="https://github.com/cvazquez/MEAN/" target="GitHib">GitHub page for the code</a>.</p>
-</div>
 
 
 <div id="sectionDemo">

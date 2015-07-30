@@ -2,7 +2,7 @@
 <html lang="en" ng-app="carlosApp">  
   <head>
     <meta charset="utf-8">
-    <title><% if (showTitle) { %> <%= title %> <% } %></title>    
+    <title><% if (page.showTitle) { %> <%= page.title %> <% } %></title>    
 
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,8 +32,8 @@
     
 
     <div class="container-fluid">
-      <div style="width: 100%; text-align:right;">
-        Return to <a href="http://www.carlosvazquez.org/blog/category/Portfolio">CarlosVazquez.org</a> | <a href="/">NodeJS Portfolio</a>
+      <div id="breadcrumb">
+        Return to <a href="/">NodeJS Portfolio Home</a> | <a href="http://www.carlosvazquez.org/blog/category/Portfolio">My Blog</a>
       </div>
 
       <%- body %>

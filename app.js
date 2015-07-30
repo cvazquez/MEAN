@@ -1,36 +1,27 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var partials = require('express-partials');
+var express = require('express'),
+  path = require('path'),
+  favicon = require('serve-favicon'),
+  logger = require('morgan'),
+  cookieParser = require('cookie-parser'),
+  bodyParser = require('body-parser'),
+  partials = require('express-partials'),
+  MongoClient = require('mongodb').MongoClient,
+  format = require('util').format,
+  assert = require('assert'),
+  routes = require('./routes/index'),
+  users = require('./routes/users'),
+  app = express(),
+  helpers = require('express-helpers')(app),
+  mongodb = require('./mongodb'),
+  debug = require('express-debug'),
+  os = require("os"),
+  url = require('url');
 
-var MongoClient = require('mongodb').MongoClient
-  , format = require('util').format
-  , assert = require('assert');
-
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
-
-var app = express();
-var helpers = require('express-helpers')(app);
-var mongodb = require('./mongodb');
-
-
-var debug = require('express-debug');
-var os = require("os");
-var url = require('url');
-
-console.log("os.hostname(); = " + os.hostname());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs'); 
 
-
-app.locals.title = 'Carlos Vazquez\'s Node.js Portfolio';
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -40,9 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', routes);
-app.use('/users', users);
 
 
 // catch 404 and forward to error handler
@@ -59,19 +48,14 @@ mongodb.connect('mongodb://localhost:27017/portfolio', function(err) {
     console.log('Unable to connect to Mongo and porfolio document.');
     process.exit(1);
   } 
-  /*
-  else {
-    app.listen(3000, function() {
-      console.log('Listening on port 3000...')
-    })
-  }*/
 });
 
+
 // If this hostname isn't webdev, then assume it is a production evironment
+console.log("os.hostname(); = " + os.hostname());
 if (os.hostname() != "webdev1"){
   app.set('env', "production");
 }
-
 console.log("Environment: " + app.get('env'));
 
 // error handlers
@@ -79,6 +63,10 @@ console.log("Environment: " + app.get('env'));
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
+
+  // Only show debug screen on development
+  debug(app, {}); 
+
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -99,10 +87,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
-if (os.hostname() === "webdev1"){
-  debug(app, {});  
-}
 
 
 module.exports = app;

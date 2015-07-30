@@ -5,6 +5,8 @@ var app = express();
 var mongodb = require('../mongodb');
 var assert = require('assert');
 
+
+// Init sections to use in different routes
 var sections = [
         { name: "Stocks",
           description: "Retrieve stock quotes from a 3rd party API call",
@@ -39,6 +41,39 @@ router.param('id', function (req, res, next, id) {
   console.log('I catch all parameters called poo');
   next();
 })
+
+
+//ejs
+router.get('/', function(req, res, next) {
+  //portfolio = require('../controllers/portfolio');
+
+  // TODO - Move these into mongoDB
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s Node.js Portfolio';
+  page.introduction = "As a demo, I have created 4 different ways of displaying the list of potential sections for this portfolio site. For each example, the portfolio is stored in an object, which I display below.\
+   One of them is retrieved from a MongoDB collection.";
+  page.sectionsCode = JSON.stringify(sections);
+  page.h2 = 'Using Express, EJS, MongoDB, Bootstrap, BackBone and Angular';
+  page.h3 = 'Demo Applications';
+
+
+  var timeInMs = Date.now();
+  
+
+   res.render('index', {
+
+        page: page,
+        sections: sections,
+        timeInMs: timeInMs,
+        age: 39,
+
+        // Override `foo` helper only for this rendering.
+        helpers: {
+            foo: function () { return 'foo.'; }
+        }
+    });
+});
 
 
 // Insert the sections into a MONGODB collection (portfolio)
@@ -102,43 +137,6 @@ router.get('/savesections', function(req, res, next) {
 });
 
 
-//ejs
-router.get('/', function(req, res, next) {
-  //portfolio = require('../controllers/portfolio');
-
-  // TODO - Move these into mongoDB
-  var showTitle =  true;
-  var title = 'Carlos Vazquez\'s Node.js Portfolio';
-  var introduction = "As a demo, I have created 4 different ways of displaying the list of potential sections for this portfolio site. For each example, the portfolio is stored in an object, which I display below.\
-   One of them is retrieved from a MongoDB collection.";
-  var sectionsCode = JSON.stringify(sections);
-
-
-  var timeInMs = Date.now();
-  
-
-   res.render('index', {
-
-        showTitle: showTitle,
-        title: title,
-        h2: 'Using Express, EJS, MongoDB, Bootstrap, BackBone and Angular',
-        h3: 'Some Applications',
-        introduction: introduction,
-        sectionsCode: sectionsCode,
-
-        sections: sections,
-        timeInMs: timeInMs,
-        age: 39,
-
-
-        
-
-        // Override `foo` helper only for this rendering.
-        helpers: {
-            foo: function () { return 'foo.'; }
-        }
-    });
-});
 
 router.get('/angular/sections', function(req, res, next) {
 
@@ -155,55 +153,71 @@ router.get('/angular/sections', function(req, res, next) {
 
 
 
-/* GET Stocker Application. */
+/* GET Stock Applications. */
 router.get('/stocks', function(req, res, next) {
 
   var sections = [
-        { name: "Stock Calculations",
+        { name: "Stock Calculations - todo",
           description: "Calculate Stock Stuff",
           link: "/stocks/algorithms"
         }
       ];
 
-  showTitle =  true;
-  title = 'Stock Applications';
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s Node.js Portfolio - Stock Applications';
+  page.introduction = "I use Angular to listen to a submit of the stock symbol field. Angular then makes an http call to a stock API I chose. The Stock API returns a JSONP response, and I use that callback to call a Javascript function that parses the Stock's name, symbol, exchange and price.";
+  page.sectionsCode = "";
+  page.h2 = '';
+  page.h3 = '';
 
-  res.render('stocks/index', { 
- 
-        title: title,
+
+  res.render('stocks/index', {  
+        page: page,
         sections: sections
-
   });
 });
 
-router.get('/stocks/algorithms', function(req, res, next) {
-
-
-  showTitle =  true;
-  title = 'Stock Application Algorithms';
-
-  res.render('stocks/algorithms', { 
-        layout: false,
-        title: title,
-
-  });
-});
 
 router.get('/fitness/running', function(req, res, next) {
-  res.render('fitness/running', { title: 'Running Applications' });
+
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Running Applications';
+  page.introduction = "Future Project: My plan is to call the MapMyRun API and display my running history here.";
+  page.sectionsCode = "";
+  page.h2 = '';
+  page.h3 = '';
+
+  res.render('fitness/running', { page: page, layout: true });
 });
 
+
 router.get('/turing-omnibus', function(req, res, next) {
-  res.render('turing-omnibus', { title: 'Turing Ombibus Applications' });
+
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Turing Omnibus';
+  page.introduction = "Future Project: My plan is to work out examples from this book.";
+  page.sectionsCode = "";
+  page.h2 = '';
+  page.h3 = '';
+
+  res.render('turing-omnibus', { page : page });
 });
 
 
 router.get('/algorithms', function(req, res, next) {
-  res.render('algorithms', { 
-  	layout: 'main',
-  	title: 'Introduction to Computing and Algorithms Applications',
-  	showTitle: true
-  });
+
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Algorithms';
+  page.introduction = "Future Project: My plan is to work out algorithm examples from my Computer Science books.";
+  page.sectionsCode = "";
+  page.h2 = '';
+  page.h3 = '';
+
+  res.render('algorithms', { page: page });
 });
 
 router.get('/locals', function(req, res, next) {
