@@ -1,5 +1,5 @@
 # MEAN
-Portfolio for coding the MEAN stack
+Portfolio for coding the MEAN stack (MongoDB, Express, Angular and Node.js).
 
 Here is the progress of my work learning the MEAN stack. Each milestone I make learning, I will do my best to commit here. The result of this code can be found on:
 http://www.carlosvazquez.org:3000/
