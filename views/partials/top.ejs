@@ -1,0 +1,20 @@
+<div id="top">
+  <% if (page.showTitle) { %>
+  <div class="title">  
+     <h1><%= page.title %></h1>
+  </div>  
+  <% } %>
+
+
+  <h2><%= page.h2 %></h2>
+
+  <h3><%= page.h3 %></h3>
+
+  <div id="introduction">
+    <%= page.introduction %>
+  </div>
+  
+  <code id="sectionsCode"><pre><%= page.sectionsCode.replace(/},{/g, "},\n{") %></pre></code>
+
+  <p>See my <a href="https://github.com/cvazquez/MEAN/" target="GitHib">GitHub page for the code</a>.</p>
+</div>
