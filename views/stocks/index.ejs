@@ -3,7 +3,7 @@
 	<%- partial('partials/top', {page: page}) %>
 	
 <div id="sectionDemo">
-	<!--http://finance.google.com/finance/info?client=ig&q=AAPL,YHOO-->
+	
 	<% /*form_for("#", function(f){ %>
 
 	    <%- f.text_field("symbol",{placeholder:"Type company or stock symbol", class:"stockSymbol"}) %>
@@ -11,9 +11,11 @@
 	    <%- f.submit("Retrieve") %><br />
 	<% }) */%>
 
+
+<h2> Retrieve Stock Quote</h2>
 	<form ng-submit="stockSymbolLookup()">
 	<p>
-	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery">
+	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery" ng-keyup="stockSynbolAutoComplete()">
 	</p>
 	</form>
 
@@ -43,8 +45,13 @@
 	</table>
 
 	
+	<div id="stockHistory">
+		<h2>Stock Quote History</h2>
+		....(In Progress)
 
+	</div>
 
+ <!--
 	<div class="sections">
 	    <% for(section in sections) { %>
 	         <p>
@@ -53,6 +60,7 @@
 	         </p>
 	     <% } %>
 	</div>
+-->
 
 </div>
 </div>

@@ -1,28 +1,28 @@
 'use strict';
 
+//onerror = handleErr;
+var txt = "";
+
+function handleErr(msg, url, l) {
+
+  txt = "There was an error on this page.\n\n";
+  txt += "Error: " + msg + "\n";
+  txt += "URL: " + url + "\n";
+  txt += "Line: " + l + "\n\n";
+  txt += "Click OK to continue.\n\n";
+  alert(txt);
+
+  return true;
+}
+
 
 // ******************************* Angular Portion of JS ***********************
-
-// Have to keep in global scope for the callbacks to be found within the closures
-var MarkItOnDemandPriceCallback, MarkItOnDemandSetPriceCallback, MarkItOnDemandAutoComplete;
-
-
-// If using the yahoo API
-var YAHOO = {
-    Finance: {
-        SymbolSuggest: {
-            ssCallback: function(r) {
-                console.log("Yahoo Result: ");
-                console.log(r);
-            }
-        }
-    }
-}
 
 
 var carlosAppClosure = (function(){
 
   var carlosApp = angular.module("carlosApp", []);
+  var returnData = {};
 
 
   carlosApp.controller("CarlosController", function ($scope, $http) {
@@ -107,21 +107,22 @@ var carlosAppClosure = (function(){
         document.getElementById("stockSymbol").focus();
     }
 
-    // Autocomplete the stock symbol and name, based on a keypress event
-    /*$scope.stockSynbolAutoComplete = function(){
-      console.log($scope.stockQuery);
+    //Autocomplete the stock symbol and name, based on a keypress event
+    $scope.stockSynbolAutoComplete = function(){
+      //console.log($scope.stockQuery);
 
 
-      MarkItOnDemandAutoComplete = function(data){
+      returnData.MarkItOnDemandAutoComplete = function(data){
         console.log(data);
       };
 
       var MarkItOnDemandAutoCompleteLookup = function(data){
-          var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=MarkItOnDemandAutoComplete';
+
+          var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=carlosAppClosure.MarkItOnDemandAutoComplete';
 
           $http.jsonp(markitOnDemandAPIURL).
               success(function(data, status, headers, config) {
-
+                  //console.log(data);
                 
               }).
             error(function(data, status, headers, config) {
@@ -132,15 +133,17 @@ var carlosAppClosure = (function(){
 
         MarkItOnDemandAutoCompleteLookup();
     }
-*/
+
 
     $scope.stockSymbolLookup = function(){
       //http://dev.markitondemand.com/#doc_lookup
 
+        var stockAPIURLs = {};
+
 
         // Accepts either the stock name or symbol, and returns the stock name, symbol and exchange. Then calls MarketOnDemandPrice to get the other information
         var MarkItOnDemandLookup = function(data){
-          var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=MarkItOnDemandPriceCallback';
+          var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=carlosAppClosure.MarkItOnDemandPriceCallback';
 
           $http.jsonp(markitOnDemandAPIURL).
               success(function(data, status, headers, config) {
@@ -155,8 +158,8 @@ var carlosAppClosure = (function(){
       
       
         // THis is the second call to retrieve the stocks price and other information
-        MarkItOnDemandPriceCallback = function(data){
-            var markitOnDemandFullAPIURL = 'http://dev.markitondemand.com/Api/v2/Quote/jsonp?symbol=' + data[0].Symbol + '&callback=MarkItOnDemandSetPriceCallback';
+        returnData.MarkItOnDemandPriceCallback = function(data){
+            var markitOnDemandFullAPIURL = 'http://dev.markitondemand.com/Api/v2/Quote/jsonp?symbol=' + data[0].Symbol + '&callback=carlosAppClosure.MarkItOnDemandSetPriceCallback';
 
             // Set these values obtained from the MarketOnDemandLookup call
             $scope.stock = {};
@@ -174,15 +177,49 @@ var carlosAppClosure = (function(){
 
 
         // This is the callback for MarkItOnDemandPriceCallback
-        MarkItOnDemandSetPriceCallback = function(data){
+        returnData.MarkItOnDemandSetPriceCallback = function(data){
           $scope.stock.lastPrice = data.LastPrice;
         };
 
         
         // Call to retieve the Name and Symbol, if either the nane or symbol was entered
         MarkItOnDemandLookup();
+
+
+
+        var yahooImplementation = function(data){
+          var yahooStockAPIURL = 'http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=' + $scope.stockQuery + '&callback=YAHOO.Finance.SymbolSuggest.ssCallback';
+          
+
+          // Call to get the price and other information
+            $http.jsonp(yahooStockAPIURL).
+              success(function(data, status, headers, config) {
+
+              }).
+             error(function(data, status, headers, config) {});  
+             
+        }// End yahooImplementation
+
+
+        //yahooImplementation();
+        
           
     }
   }); // End StockController
 
+    // If using the yahoo API
+    returnData.YAHOO = {
+        Finance: {
+            SymbolSuggest: {
+                ssCallback: function(r) {
+                    console.log("Yahoo Result: ");
+                    console.log(r);
+                }
+            }
+        }
+    }
+    return returnData;
+
 })();
+
+var YAHOO = carlosAppClosure.YAHOO;
