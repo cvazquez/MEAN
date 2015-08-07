@@ -16,6 +16,7 @@
 	<form ng-submit="stockSymbolLookup()">
 	<p>
 	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery" ng-keyup="stockSynbolAutoComplete()">
+	<input type="button" name="submit" id="submit" value="Retrieve">
 	</p>
 	</form>
 
@@ -47,7 +48,38 @@
 	
 	<div id="stockHistory">
 		<h2>Stock Quote History</h2>
-		....(In Progress)
+
+		<%/*....(In Progress - I plan to store all quotes submitted into MongoDB, including the tracking of user information, and display it here. Some proof to show how non-private your information really is.) */%>
+
+		<table class="table  table-striped">
+			<tr>
+				<td>Stock Symbol</td>
+				<td>Stock Price</td>
+				<td>IP Address</td>
+				<td>Country Code</td>
+				<td>Country Name</td>
+				<td>Region Name</td>
+				<td>City Name</td>
+				<td>Zip Code</td>
+				<td>Latitude</td>
+				<td>Longitude</td>
+				<td>Time Zone</td>
+			</tr>
+			<tr ng-repeat="data in clientData">
+				<td>{{data.stockSymbol}}</td>
+				<td>{{data.stockPrice}}</td>
+				<td>{{data.ipAddress}}</td>
+				<td>{{data.countryCode}}</td>
+				<td>{{data.countryName}}</td>
+				<td>{{data.regionName}}</td>
+				<td>{{data.cityName}}</td>
+				<td>{{data.zipCode}}</td>
+				<td>{{data.latitude}}</td>
+				<td>{{data.longitude}}</td>
+				<td>{{data.timeZone}}</td>
+			</tr>
+		</table>
+		
 
 	</div>
 

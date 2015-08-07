@@ -9,7 +9,6 @@ var express = require('express'),
   format = require('util').format,
   assert = require('assert'),
   routes = require('./routes/index'),
-  users = require('./routes/users'),
   app = express(),
   helpers = require('express-helpers')(app),
   mongodb = require('./mongodb'),
@@ -17,6 +16,7 @@ var express = require('express'),
   os = require("os"),
   url = require('url');
 
+//  users = require('./routes/users'),
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,9 +28,15 @@ app.set('view engine', 'ejs');
 app.use(partials());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(express.json());       // to support JSON-encoded bodies
+//app.use(express.urlencoded()); // to support URL-encoded bodies
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 app.use('/', routes);
 
 
@@ -80,7 +86,14 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Error Page';
+
   res.render('error', {
+    page: page,
+
     message: err.message,
     err: err,
     error: {}

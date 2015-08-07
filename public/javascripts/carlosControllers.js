@@ -143,17 +143,15 @@ var carlosAppClosure = (function(){
 
         // Accepts either the stock name or symbol, and returns the stock name, symbol and exchange. Then calls MarketOnDemandPrice to get the other information
         var MarkItOnDemandLookup = function(data){
-          var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=carlosAppClosure.MarkItOnDemandPriceCallback';
+        var markitOnDemandAPIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=carlosAppClosure.MarkItOnDemandPriceCallback';
+        
 
           $http.jsonp(markitOnDemandAPIURL).
-              success(function(data, status, headers, config) {
-
-                MarkItOnDemandCallBack();
+              success(function(data, status, headers, config) {                
               }).
             error(function(data, status, headers, config) {
             });
 
-          
         };
       
       
@@ -178,7 +176,30 @@ var carlosAppClosure = (function(){
 
         // This is the callback for MarkItOnDemandPriceCallback
         returnData.MarkItOnDemandSetPriceCallback = function(data){
+          var getClientData = "/api/clientdata/" + data.LastPrice + "/" + $scope.stock.symbol;
           $scope.stock.lastPrice = data.LastPrice;
+
+          // Store the users network/location information and the stock price
+          $http.get(getClientData).success(function(data, status, headers, config){
+                console.log("ClientData");
+                console.log(data);
+                $scope.clientData = data;
+              }).error(function(data, status, headers, config){
+            });
+          
+          /*
+          $http.post(getClientData, {stockInfo:$scope.stock}).
+              then(function(response) {
+                // this callback will be called asynchronously
+                // when the response is available
+                console.log("ClientData");
+                console.log(response);
+                $scope.clientData = response;
+              }, function(response) {
+                // called asynchronously if an error occurs
+                // or server returns response with an error status.
+              });
+        */
         };
 
         
