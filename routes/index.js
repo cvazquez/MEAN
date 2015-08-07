@@ -46,10 +46,6 @@ router.use(function(req, res, next) {
 });
 
 
-router.param('id', function (req, res, next, id) {
-  console.log('I catch all parameters called poo');
-  next();
-})
 
 
 //ejs
@@ -157,7 +153,7 @@ router.get('/savesections', function(req, res, next) {
 });
 
 
-
+// called from the home page, to demo retrieving the sections, as JSON, to Angular. Then Angular uses the JSON data to display the sections list
 router.get('/angular/sections', function(req, res, next) {
 
   showTitle =  true;
@@ -173,9 +169,8 @@ router.get('/angular/sections', function(req, res, next) {
 
 
 
-/* GET Stock Applications. */
+// Stock Application
 router.get('/stocks', function(req, res, next) {
-
   var sections = [
         { name: "Stock Calculations - todo",
           description: "Calculate Stock Stuff",
@@ -199,27 +194,58 @@ router.get('/stocks', function(req, res, next) {
 });
 
 
-router.get('/fitness/running', function(req, res, next) {
+// Return JSON of existing clients that performed stock quotes
+// /api/stocks/clientdata
+
+router.get('/api/stocks/clientdata', function(req, res, next){
+
+  
+    var collection = mongodb.get().collection("stockClientData");
+    var sort = {'_id': -1};
+    var query = {};
+    var limit = 10;
+
+  
+    // Locate all the entries using find, but exclude the primary key
+    collection.find(query,{_id:false}).sort(sort).limit(limit).toArray(function(err, results) {
+        // Return back to stock app, to use in the stock history sections
+        res.json(results);
+    });
 
 
-  var page = {};
-  page.showTitle =  true;
-  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Running Applications';
-  page.introduction = "Future Project: My plan is to call the MapMyRun API and display my running history here.";
-  page.sectionsCode = "";
-  page.h2 = '';
-  page.h3 = '';
-
-  res.render('fitness/running', { page: page, layout: true });
 });
 
 
-
+// /api/clientdata/55.36/IBM
 router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
   var clientData = {};
-  //clientData.stockSymbol = req.stockInfo.symbol;
-  clientData.stockPrice = req.params.stockPrice;
-  clientData.stockSymbol = req.params.stockSymbol;
+  var errorMessage;
+  var stock = {};
+  stock.price = parseFloat(req.params.stockPrice);
+  stock.symbol = req.params.stockSymbol.toUpperCase();
+
+
+  // Validate that the stock number passed is a valid number. Return an error otherwise
+  if (typeof stock.price != "number") {
+      errorMessage = "Stock Price " + stock.price + " is not a valid number!";
+      console.log(errorMessage);
+      res.json({errorMessage: errorMessage});
+  }
+
+
+  // Validate that the stock symbol passed is valid
+  console.log("stock test " + (/^[a-zA-Z0-9-]{1,5}$/i).test(stock.symbol));
+
+  if (! (/^[a-zA-Z0-9-]{1,5}$/i).test(stock.symbol) ){
+      errorMessage = "The stock symbol " + stock.symbol + " is not valid!";
+      console.log(errorMessage);
+      res.json({errorMessage: errorMessage});
+      return;
+  }
+
+
+  clientData.stockPrice = stock.price;
+  clientData.stockSymbol = stock.symbol;
   clientData.ipAddress = req.ip;
   clientData.userAgent = req.headers['user-agent'];
   clientData.countryCode = "";
@@ -236,7 +262,13 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
     clientData.ipAddress = "74.125.45.100";
   }
 
-  /*
+  
+
+
+  // Use this ip location api to determine location meta data about the current user
+  // http://www.ipinfodb.com/ip_location_api.php
+  // http://api.ipinfodb.com/v3/ip-city/?key=1b4cba9bd9a0825d02e1c3a7ed603af2e7517feb681140f2dea0be6db7371840&ip=72.229.208.82&format=json
+  /* Example of the JSON that will return
   {
     "statusCode" : "OK",
     "statusMessage" : "",
@@ -251,12 +283,6 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
     "timeZone" : "-08:00"
   }
   */
-
-
-
-  // Use this ip location api to determine location meta data about the current user
-  // http://www.ipinfodb.com/ip_location_api.php
-  // http://api.ipinfodb.com/v3/ip-city/?key=1b4cba9bd9a0825d02e1c3a7ed603af2e7517feb681140f2dea0be6db7371840&ip=72.229.208.82&format=json
 
 
     // Create HTTP call parameters 
@@ -274,14 +300,8 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
     http.get(options, function(resp){
       resp.on('data', function(chunk){
 
-        //console.log("before parse");
-        //console.log(chunk);
-
         // Parse results into a JSON object and return to client
         var bodyParsed = JSON.parse(chunk);
-
-        //console.log("after parse");
-        //console.log(bodyParsed);
 
         clientData.countryCode = bodyParsed.countryCode;
         clientData.countryName = bodyParsed.countryName;
@@ -295,7 +315,7 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
         var collection = mongodb.get().collection("stockClientData");
   
 
-        // Reinsert clientDate into MongoDB collection
+        // Insert clientData into MongoDB collection. This will display as a history of stock searches on the Stock Application
         collection.insert(clientData, function(err, docs) {
 
             // http://mongodb.github.io/node-mongodb-native/2.0/
@@ -309,9 +329,15 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
           collection.count(function(err, count) {
             console.log("count = " + count);
           });
+
+
+          var sort = {'_id': -1};
+          var query = {};
+          var selector = {_id:false};
+          var limit = 10;
            
           // Locate all the entries using find, but exclude the primary key
-          collection.find({},{_id:false}).toArray(function(err, results) {
+          collection.find(query,selector).sort(sort).limit(limit).toArray(function(err, results) {
               // Return back to stock app, to use in the stock history sections
               res.json(results);
           });
@@ -330,7 +356,7 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
 
 
 
-    /* // Using request module
+    /* // Using an alternate method through the request module
     var request = require("request");
      
     request("http://api.ipinfodb.com/v3/ip-city/?key=1b4cba9bd9a0825d02e1c3a7ed603af2e7517feb681140f2dea0be6db7371840&ip=" + clientData.ipAddress + "&format=json", function(error, response, body) {
@@ -356,6 +382,24 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
   
 
 });
+
+
+router.get('/fitness/running', function(req, res, next) {
+
+
+  var page = {};
+  page.showTitle =  true;
+  page.title = 'Carlos Vazquez\'s MEAN Portfolio - Running Applications';
+  page.introduction = "Future Project: My plan is to call the MapMyRun API and display my running history here.";
+  page.sectionsCode = "";
+  page.h2 = '';
+  page.h3 = '';
+
+  res.render('fitness/running', { page: page, layout: true });
+});
+
+
+
 
 
 router.get('/turing-omnibus', function(req, res, next) {
@@ -390,6 +434,16 @@ router.get('/locals', function(req, res, next) {
 });
 
 
+
+// invoked for any requests passed to this router
+router.use(function(req, res, next) {
+  // .. some logic here .. like any other middleware
+  console.log("This is always run if no route exists!");
+  next();
+});
+
+
+/* Examples
 router.get('/user/:id', function (req, res, next) {
   console.log('ID:', req.params.id);
   next();
@@ -401,13 +455,6 @@ router.get('/user/:id', function (req, res, next) {
 router.get('/user/:id', function (req, res, next) {
   res.end(req.params.id);
 });
-
-
-// invoked for any requests passed to this router
-router.use(function(req, res, next) {
-  // .. some logic here .. like any other middleware
-  console.log("This is always run if no route exists!");
-  next();
-});
+*/
 
 module.exports = router;

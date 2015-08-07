@@ -107,6 +107,34 @@ var carlosAppClosure = (function(){
         document.getElementById("stockSymbol").focus();
     }
 
+
+    function GetClientData(){
+      var getClientData = "/api/stocks/clientdata";
+
+        // Retrieve the latest stock symbol queries by all users
+        $http.get(getClientData).success(function(data, status, headers, config){
+              if(typeof data.errorMessage === "defined"){
+                alert(date.errorMessage);
+                 return; 
+              }
+
+              console.log("ClientData");
+              console.log(data);
+
+              if(data.length > 0){
+                // Display in the Stock History section
+                $scope.clientData = data;  
+              }
+              
+            }).error(function(data, status, headers, config){
+          });
+    }
+
+    GetClientData();
+
+
+
+
     //Autocomplete the stock symbol and name, based on a keypress event
     $scope.stockSynbolAutoComplete = function(){
       //console.log($scope.stockQuery);
@@ -174,15 +202,24 @@ var carlosAppClosure = (function(){
           };
 
 
-        // This is the callback for MarkItOnDemandPriceCallback
+        /* This is the callback for MarkItOnDemandPriceCallback
+            The price will be saved to a database, and used to be display as a history of stock lookups 
+        */
         returnData.MarkItOnDemandSetPriceCallback = function(data){
           var getClientData = "/api/clientdata/" + data.LastPrice + "/" + $scope.stock.symbol;
           $scope.stock.lastPrice = data.LastPrice;
 
-          // Store the users network/location information and the stock price
+          // Store the users network/location information and the stock price, then retrieve it and redisplay in the Stock History sections
           $http.get(getClientData).success(function(data, status, headers, config){
+                if(typeof data.errorMessage === "defined"){
+                  alert(date.errorMessage);
+                   return; 
+                }
+
                 console.log("ClientData");
                 console.log(data);
+
+                // Display in the Stock History section
                 $scope.clientData = data;
               }).error(function(data, status, headers, config){
             });
