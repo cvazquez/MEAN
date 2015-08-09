@@ -1,1 +1,23 @@
 <h1>error</h1>
+
+<% if (typeof message != "undefined"){ %>
+	<h2>Error Message</h2>
+	<p><%= message %></p>
+<% } %>
+
+
+<% if (typeof err != "undefined"){ %>
+	<h2>Err</h2>
+	<p><%= err %></p>
+<% } %>
+
+
+<% if (typeof error.stack != "undefined"){ %>
+	<h2>Err</h2>
+	<p><%= error.stack %></p>
+<% } %>
+
+<% if (typeof error.status != "undefined"){ %>
+	<h2>Err</h2>
+	<p><%= error.status %></p>
+<% } %>

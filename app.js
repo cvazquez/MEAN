@@ -37,7 +37,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/', routes);
+//Controller Setups
+app.use('/stocks', require('./controllers/stocks'))
+app.use('/fitness', require('./controllers/fitness'))
+app.use('/turing', require('./controllers/turing'))
+app.use('/algorithms', require('./controllers/algorithms'))
+app.use('/', require('./controllers/home'))
 
 
 // catch 404 and forward to error handler
@@ -46,6 +51,7 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
 
 
 // Connect to Mongo on start
@@ -87,17 +93,29 @@ if (app.get('env') === 'development') {
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
 
+  console.log("Error Handler - Start");
+  console.log(err);
+
   var page = {};
   page.showTitle =  true;
   page.title = 'Carlos Vazquez\'s MEAN Portfolio - Error Page';
+  console.log("Error Handler - Middle");
 
-  res.render('error', {
-    page: page,
-
-    message: err.message,
-    err: err,
-    error: {}
-  });
+  if (app.get('env') === 'development') {
+      res.render('error', {
+        page: page,
+        message: err.message,
+        err: err,
+        error: {}
+      });
+  } else {
+    res.render('error', {
+        page: page,
+        message: "There was an error accessing this page. An admin should be notified.",
+        err: {},
+        error: {}
+      });
+  }
 });
 
 
@@ -105,7 +123,7 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 
-// Stuff I ended up not using
+// Stuff I ended up not using or that's deprecated or something
 
 //var exphbs  = require('express-handlebars');
 //var jQuery = require('jquery');

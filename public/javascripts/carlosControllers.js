@@ -109,7 +109,7 @@ var carlosAppClosure = (function(){
 
 
     function GetClientData(){
-      var getClientData = "/api/stocks/clientdata";
+      var getClientData = "/stocks/api/clientdata";
 
         // Retrieve the latest stock symbol queries by all users
         $http.get(getClientData).success(function(data, status, headers, config){
@@ -206,7 +206,7 @@ var carlosAppClosure = (function(){
             The price will be saved to a database, and used to be display as a history of stock lookups 
         */
         returnData.MarkItOnDemandSetPriceCallback = function(data){
-          var getClientData = "/api/clientdata/" + data.LastPrice + "/" + $scope.stock.symbol;
+          var getClientData = "/stocks/api/clientdata/" + data.LastPrice + "/" + $scope.stock.symbol;
           $scope.stock.lastPrice = data.LastPrice;
 
           // Store the users network/location information and the stock price, then retrieve it and redisplay in the Stock History sections
