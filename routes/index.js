@@ -1,20 +1,13 @@
-var express = require('express');
-var router = express.Router();
-
-var app = express();
-var mongodb = require('../mongodb');
-var assert = require('assert');
-var http = require('http');
-var os = require("os");
+var express = require('express'),
+    router = express.Router(),
+    app = express(),
+    mongodb = require('../mongodb'),
+    assert = require('assert'),
+    http = require('http'),
+    os = require("os");
 
 // Init sections to use in different routes
-console.log("Inside Index.js");
-
-
-if (os.hostname() != "webdev1"){
-  app.set('env', "production");
-}
-
+app.get('env') === "development" && console.log("Inside Index.js");
 
 // invoked for any requests passed to this router
 router.use(function(req, res, next) {
@@ -23,19 +16,13 @@ router.use(function(req, res, next) {
   next();
 });
 
-
-
 // Insert the sections into a MONGODB collection (portfolio)
 // http://192.168.11.14:3000/savesections
 router.get('/savesections', function(req, res, next) {
-
-  var showTitle =  true;
-  var title = 'Carlos Vazquez\'s Node.js Portfolio - Save Sections to MongoDB';
-
-  var sectionCollection = {count: '[Empty Count]', results: '[Empty Results]'};
-
-
-   var collection = mongodb.get().collection('sections');
+  var showTitle =  true,
+      title = 'Carlos Vazquez\'s Node.js Portfolio - Save Sections to MongoDB',
+      sectionCollection = {count: '[Empty Count]', results: '[Empty Results]'},
+      collection = mongodb.get().collection('sections');
 
    // remove sections from MongoDB sections collection
    collection.remove({}, function(err, result) {
@@ -53,7 +40,6 @@ router.get('/savesections', function(req, res, next) {
       assert.equal(4, docs.result.n);
       assert.equal(4, docs.ops.length);
       console.log("Inserted 4 documents into the document collection");
-      //callback(result);
 
       collection.count(function(err, count) {
 
@@ -75,9 +61,6 @@ router.get('/savesections', function(req, res, next) {
           page.h2 = '';
           page.h3 = '';
 
-        // Let's close the db
-        //mongodb.close();
-
           res.render('savesections', {
           showTitle: showTitle,
           title: title,
@@ -86,19 +69,12 @@ router.get('/savesections', function(req, res, next) {
           page: page
           });
       });
-
-
-
-
     });
-
-
 });
 
 
 // called from the home page, to demo retrieving the sections, as JSON, to Angular. Then Angular uses the JSON data to display the sections list
 router.get('/angular/sections', function(req, res, next) {
-
   showTitle =  true;
   title = 'Carlos Vazquez\'s Node.js Portfolio';
 
@@ -111,27 +87,11 @@ router.get('/angular/sections', function(req, res, next) {
 });
 
 
-
 // invoked for any requests passed to this router
 router.use(function(req, res, next) {
   // .. some logic here .. like any other middleware
   console.log("This is always run if no route exists!");
   next();
 });
-
-
-/* Examples
-router.get('/user/:id', function (req, res, next) {
-  console.log('ID:', req.params.id);
-  next();
-}, function (req, res, next) {
-  res.send('User Info');
-});
-
-// handler for /user/:id which prints the user id
-router.get('/user/:id', function (req, res, next) {
-  res.end(req.params.id);
-});
-*/
 
 module.exports = router;

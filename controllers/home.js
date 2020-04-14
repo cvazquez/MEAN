@@ -28,32 +28,21 @@ var express = require('express'),
         }
       ];
 
-if (os.hostname() != "carlosubuntu"){
-  app.set('env', "production");
-  env = "producton";
-}
-
-if(env === "dev") {
-  console.log("Inside Index.js");
-}
+app.get('env') === "development" && console.log("Inside Index.js");
 
 // invoked for any requests passed to this router
 router.use(function(req, res, next) {
   // .. some logic here .. like any other middleware
 
-  if(env === "dev") {
-    console.log("This is always run first (home)!");
-  }
+  app.get('env') === "development" && console.log("This is always run first (home)!");
 
   next();
 });
 
-
-
 //ejs
 router.get('/', function(req, res, next) {
 
-  console.log("Inside /");
+  app.get('env') === "development" && console.log("Inside /");
 
   // TODO - Move these into mongoDB
   var page = {
@@ -81,26 +70,20 @@ router.get('/', function(req, res, next) {
 });
 
 
-
 // Insert the sections into a MONGODB collection (portfolio)
 // http://192.168.11.14:3000/savesections
 router.get('/savesections', function(req, res, next) {
-
-  var showTitle =  true;
-  var title = 'Carlos Vazquez\'s Node.js Portfolio - Save Sections to MongoDB';
-
-  var sectionCollection = {count: '[Empty Count]', results: '[Empty Results]'};
-
-
-   var collection = mongodb.get().collection('sections');
+  var showTitle =  true,
+      title = 'Carlos Vazquez\'s Node.js Portfolio - Save Sections to MongoDB',
+      sectionCollection = {count: '[Empty Count]', results: '[Empty Results]'},
+      collection = mongodb.get().collection('sections');
 
    // remove sections from MongoDB sections collection
    collection.remove({}, function(err, result) {
       assert.equal(err, null);
       assert.equal(4, result.result.n);
-      console.log("Removed " + result.result.n + " documents");
-      //callback(result);
-  });
+      app.get('env') === "development" && console.log("Removed " + result.result.n + " documents");
+    });
 
     // Reinsert sections into MongoDB collection
     collection.insert(sections, function(err, docs) {
@@ -109,39 +92,35 @@ router.get('/savesections', function(req, res, next) {
       assert.equal(err, null);
       assert.equal(4, docs.result.n);
       assert.equal(4, docs.ops.length);
-      console.log("Inserted 4 documents into the document collection");
-      //callback(result);
+      app.get('env') === "development" && console.log("Inserted 4 documents into the document collection");
 
       collection.count(function(err, count) {
-
-        console.log("count = " + count);
+        app.get('env') === "development" && console.log("count = " + count);
         sectionCollection["count"] = count;
-        console.log("sectionCollection[count]: " + sectionCollection["count"]);
+        app.get('env') === "development" && console.log("sectionCollection[count]: " + sectionCollection["count"]);
       });
 
       // Locate all the entries using find
       collection.find().toArray(function(err, results) {
-        console.dir(results);
+        var page = {
+          showTitle     :  true,
+          title         : 'Carlos Vazquez\'s Node.js Portfolio - Save Sections',
+          introduction  : "Saving sections to MongoDB",
+          sectionsCode  : "",
+          h2            : '',
+          h3            : ''
+       };
+
+        app.get('env') === "development" && console.dir(results);
         sectionCollection["results"] = results;
 
-         var page = {};
-          page.showTitle =  true;
-          page.title = 'Carlos Vazquez\'s Node.js Portfolio - Save Sections';
-          page.introduction = "Saving sections to MongoDB";
-          page.sectionsCode = "";
-          page.h2 = '';
-          page.h3 = '';
-
-        // Let's close the db
-        //mongodb.close();
-
-          res.render('savesections', {
-          showTitle: showTitle,
-          title: title,
-          sections: sections,
-          sectionCollection: sectionCollection,
-          page: page
-          });
+        res.render('savesections', {
+          showTitle         : showTitle,
+          title             : title,
+          sections          : sections,
+          sectionCollection : sectionCollection,
+          page              : page
+        });
       });
     });
 });

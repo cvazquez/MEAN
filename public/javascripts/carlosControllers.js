@@ -17,8 +17,6 @@ function handleErr(msg, url, l) {
 
 
 // ******************************* Angular Portion of JS ***********************
-
-
 var carlosAppClosure = (function(){
 
   var carlosApp = angular.module("carlosApp", []),
@@ -56,10 +54,6 @@ var carlosAppClosure = (function(){
         //Update view with HTML'd sections
         document.getElementById("sectionsHTTP").innerHTML = createSectionsHTML;
         document.getElementById("sectionsLength").innerHTML = $scope.sectionsHTTP.length;
-
-        //console.log(data);
-        //console.log($scope.sectionsHTTP.length);
-
       }).
       error(function(data, status, headers, config) {
         // called asynchronously if an error occurs
@@ -89,9 +83,7 @@ var carlosAppClosure = (function(){
             link: "/algorithms"
           }
         ];
-
       });
-
 
 
   carlosApp.controller("StockController", function ($scope, $http) {
@@ -128,37 +120,6 @@ var carlosAppClosure = (function(){
           }).error(function(data, status, headers, config){
         });
     })(); */
-
-
-
-    //Autocomplete the stock symbol and name, based on a keypress event
-    /* $scope.stockSynbolAutoComplete = function(){
-      //console.log($scope.stockQuery);
-
-
-      returnData.AutoComplete = function(data){
-        console.log(data);
-      };
-
-      (function(data) {
-
-          var APIURL = 'http://dev.markitondemand.com/Api/v2/Lookup/jsonp?input=' + $scope.stockQuery + '&callback=carlosAppClosure.MarkItOnDemandAutoComplete';
-
-          $http.jsonp(APIURL).
-              success(function(data, status, headers, config) {
-                  //console.log(data);
-
-              }).
-            error(function(data, status, headers, config) {
-            });
-
-
-        }
-      )();
-
-
-    } */
-
 
     $scope.stockSymbolLookup = function(){
         let stockAPIURLs = {};

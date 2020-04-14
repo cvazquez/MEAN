@@ -16,26 +16,17 @@ var express = require('express'),
   os = require("os"),
   url = require('url');
 
-//  users = require('./routes/users'),
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-
-// uncomment after placing your favicon in /public
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(partials());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(express.json());       // to support JSON-encoded bodies
-//app.use(express.urlencoded()); // to support URL-encoded bodies
-
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 //Controller Setups
 app.use('/stocks', require('./controllers/stocks'))
@@ -44,15 +35,12 @@ app.use('/turing', require('./controllers/turing'))
 app.use('/algorithms', require('./controllers/algorithms'))
 app.use('/', require('./controllers/home'))
 
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
-
-
 
 // Connect to Mongo on start
 mongodb.connect('mongodb://localhost:27017/portfolio', function(err) {
@@ -61,7 +49,6 @@ mongodb.connect('mongodb://localhost:27017/portfolio', function(err) {
     process.exit(1);
   }
 });
-
 
 // If this hostname isn't webdev, then assume it is a production evironment
 console.log("os.hostname(); = " + os.hostname());
