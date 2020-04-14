@@ -1,9 +1,9 @@
 <div ng-controller="StockController">
 
 	<%- partial('partials/top', {page: page}) %>
-	
+
 <div id="sectionDemo">
-	
+
 	<% /*form_for("#", function(f){ %>
 
 	    <%- f.text_field("symbol",{placeholder:"Type company or stock symbol", class:"stockSymbol"}) %>
@@ -16,13 +16,13 @@
 	<p><b>Warning:</b> The stock symbols you enter here, will be tracked and displayed in the table below.</p>
 	<form ng-submit="stockSymbolLookup()">
 	<p>
-	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery" ng-keyup="stockSynbolAutoComplete()">
+	<input type="text" name="stockSymbol" id="stockSymbol" placeholder="Type company or stock symbol" ng-model="stockQuery">
 	<input type="submit" name="submit" id="submit" value="Retrieve">
 	</p>
 	</form>
 
 	<p>You are searching for: {{stockQuery}}</p>
-	
+
 	<table id="stockResults">
 		<tr class="stockResultsHeader">
 		<td colspan="2">Results</td>
@@ -43,10 +43,10 @@
 			<td>Last Price</td>
 			<td>{{stock.lastPrice}}</td>
 		</tr>
-		
+
 	</table>
 
-	
+
 	<div id="stockHistory">
 		<h2>Stock Quote History</h2>
 
@@ -79,7 +79,7 @@
 				<td>{{data.timeZone}}</td>
 			</tr>
 		</table>
-		
+
 
 	</div>
 

@@ -19,7 +19,7 @@ if (os.hostname() != "webdev1"){
 // invoked for any requests passed to this router
 router.use(function(req, res, next) {
   // .. some logic here .. like any other middleware
-  console.log("This is always run first!");
+  console.log("This is always run first (index)!");
   next();
 });
 
@@ -34,16 +34,16 @@ router.get('/savesections', function(req, res, next) {
 
   var sectionCollection = {count: '[Empty Count]', results: '[Empty Results]'};
 
-  
+
    var collection = mongodb.get().collection('sections');
-    
+
    // remove sections from MongoDB sections collection
    collection.remove({}, function(err, result) {
       assert.equal(err, null);
       assert.equal(4, result.result.n);
       console.log("Removed " + result.result.n + " documents");
       //callback(result);
-  });    
+  });
 
     // Reinsert sections into MongoDB collection
     collection.insert(sections, function(err, docs) {
@@ -54,15 +54,15 @@ router.get('/savesections', function(req, res, next) {
       assert.equal(4, docs.ops.length);
       console.log("Inserted 4 documents into the document collection");
       //callback(result);
-      
+
       collection.count(function(err, count) {
 
         console.log("count = " + count);
         sectionCollection["count"] = count;
         console.log("sectionCollection[count]: " + sectionCollection["count"]);
       });
- 
-      // Locate all the entries using find 
+
+      // Locate all the entries using find
       collection.find().toArray(function(err, results) {
         console.dir(results);
         sectionCollection["results"] = results;
@@ -75,7 +75,7 @@ router.get('/savesections', function(req, res, next) {
           page.h2 = '';
           page.h3 = '';
 
-        // Let's close the db 
+        // Let's close the db
         //mongodb.close();
 
           res.render('savesections', {
@@ -84,11 +84,11 @@ router.get('/savesections', function(req, res, next) {
           sections: sections,
           sectionCollection: sectionCollection,
           page: page
-          });  
+          });
       });
 
 
-      
+
 
     });
 
@@ -104,10 +104,10 @@ router.get('/angular/sections', function(req, res, next) {
 
   res.json(
       { title: title,
-        h2: 'Using Express, EJS, MongoDB, Bootstrap, BackBone and Angular',
+        h2: 'Using Express, EJS, MongoDB, Bootstrap, BackBone and Angular...',
         h3: 'Some Applications',
         sections: sections
-    });  
+    });
 });
 
 

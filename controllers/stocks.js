@@ -1,67 +1,97 @@
 var express = require('express'),
     router = express.Router(),
     app = express(),
-    mongodb = require('../mongodb'),
+    MongoClient = require('mongodb').MongoClient,
+    Server = require('mongodb').Server,
+    Db = require('mongodb').Db,
+    //mongodb = require('../mongodb'),
     http = require('http'),
     assert = require('assert'),
-    os = require("os");
+    os = require("os"),
+    env = "dev",
+    db = new Db('portfolio', new Server('localhost', 27017));
 
-if (os.hostname() != "webdev1"){
+console.log(db);
+return
+
+
+    db.open(function(err, db) {
+      assert.equal(null, err);
+
+      db.on('close', test.done.bind(test));
+      db.close();
+    });
+console.log(db)
+
+if (os.hostname() != "carlosubuntu"){
   app.set('env', "production");
+  env = "production";
 }
 
-console.log("/stocks");
+if(env === "dev") {
+  console.log("/stocks");
+}
+
+
+
+
 
 // Stock Application
 router.get('/', function(req, res, next) {
   var sections = [
-        { name: "Stock Calculations - todo",
-          description: "Calculate Stock Stuff",
-          link: "/stocks/algorithms"
-        }
-      ];
+      {
+        name        : "Stock Calculations - todo",
+        description : "Calculate Stock Stuff",
+        link        : "/stocks/algorithms"
+      }
+    ],
+    page = {
+                title         : 'Carlos Vazquez\'s Node.js Portfolio - Stock Applications',
+                introduction  : "I use Angular to listen to a submit of the stock symbol field. Angular then makes an http call to a stock API I chose. The Stock API returns a JSONP response, and I use that callback to call a Javascript function that parses the Stock's name, symbol, exchange and price.",
+                sectionsCode  : "",
+                h2            : '',
+                h3            : ''
+    },
+    showTitle =  true;
 
-  var page = {};
-  page.showTitle =  true;
-  page.title = 'Carlos Vazquez\'s Node.js Portfolio - Stock Applications';
-  page.introduction = "I use Angular to listen to a submit of the stock symbol field. Angular then makes an http call to a stock API I chose. The Stock API returns a JSONP response, and I use that callback to call a Javascript function that parses the Stock's name, symbol, exchange and price.";
-  page.sectionsCode = "";
-  page.h2 = '';
-  page.h3 = '';
+  if(env === "dev") {
+    console.log("inside /stocks");
+  }
 
-
-  res.render('stocks/index', {  
-        page: page,
-        sections: sections
+  res.render('stocks/index', {
+        page      : page,
+        sections  : sections
   });
 });
 
 
-
 // /api/clientdata/55.36/IBM
-router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
-  var clientData = {};
-  var errorMessage;
-  var ipInfoDBKey;
-  var apikeyCollection;
-  var stock = {};
-  stock.price = parseFloat(req.params.stockPrice);
-  stock.symbol = req.params.stockSymbol.toUpperCase();
+router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next) {
+  var errorMessage,
+      ipInfoDBKey,
+      apikeyCollection,
+      stock = {
+        price   : parseFloat(req.params.stockPrice),
+        symbol  : req.params.stockSymbol.toUpperCase()
+      },
+      clientData = {
+        stockPrice    : stock.price,
+        stockSymbol   : stock.symbol,
+        ipAddress     : req.ip,
+        userAgent     : req.headers['user-agent'],
+        countryCode   : "",
+        countryName   : "",
+        regionName    : "",
+        cityName      : "",
+        zipCode       : "",
+        latitude      : "",
+        longitude     : "",
+        timeZone      : ""
+      };
 
-    clientData.stockPrice = stock.price;
-    clientData.stockSymbol = stock.symbol;
-    clientData.ipAddress = req.ip;
-    clientData.userAgent = req.headers['user-agent'];
-    clientData.countryCode = "";
-    clientData.countryName = "";
-    clientData.regionName = "";
-    clientData.cityName = "";
-    clientData.zipCode = "";
-    clientData.latitude = "";
-    clientData.longitude = "";
-    clientData.timeZone = "";
-
-
+  if(env === "dev") {
+    console.log("/api/clientdata/:stockPrice/:stockSymbol");
+  }
 
   // Validate that the stock number passed is a valid number. Return an error otherwise
   if (typeof stock.price != "number") {
@@ -89,8 +119,8 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
     clientData.ipAddress = "74.125.45.100";
   }
 
-  
-    // Create HTTP call parameters 
+
+    // Create HTTP call parameters
     // > db.apikeys.insert({name: "ipinfodb", key: [YourAPIKEY]});
 
 /*
@@ -99,26 +129,26 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
     //db.apikeys.find({name:"ipinfodb"},{_id:0,key:1});
 
 
-    
+
     apikeyCollection.find({"name":"ipinfodb"},{"_id":0,"key":1}).limit(1).toArray(function(err, result) {
             if(err){
-                  console.log(err); 
+                  console.log(err);
             } else{
                 ipInfoDBKey = result[0].key;
                 console.log("key = " + ipInfoDBKey);
 
             }
           }).on("error", function(e){
-              // Return an empty  object 
+              // Return an empty  object
 
               console.log("Got error: " + e.message);
               console.log(e);
             });
     */
 
-    
 
-    function ipDataResponse(){       
+
+    function ipDataResponse(){
 
         if (ipInfoDBKey == "" || typeof ipInfoDBKey === "undefined"){
            ipInfoDBKey = "1b4cba9bd9a0825d02e1c3a7ed603af2e7517feb681140f2dea0be6db7371840";
@@ -154,15 +184,39 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
                   'Content-Type': 'application/json'
               }
           };
-          
+
 
           // Call IP Location API
           http.get(options, function(resp){
             resp.on('data', function(chunk){
 
               // Parse results into a JSON object and return to client
-              var bodyParsed = JSON.parse(chunk);
+              var bodyParsed = JSON.parse(chunk),
+                  //collection = mongodb.collection("stockClientData"),
+                  sort = {'_id': -1},
+                  query = {},
+                  selector = {_id:false},
+                  limit = 10;
+console.log(mongodb)
+                 /*  mongodb.connect(function(err) {
+                    assert.equal(null, err);
+                    console.log("Connected successfully to server");
 
+                    const db = client.db('portfolio');
+
+                    console.log(db);
+                    client.close();
+                  }); */
+
+                  /* mongodb.open(function(err, db) {
+                    var collection = db.collection("stockClientData");
+                    console.log(collection)
+                  }); */
+
+//console.log(collection);
+return;
+                  //console.log(bodyParsed);
+//return;
               clientData.countryCode = bodyParsed.countryCode;
               clientData.countryName = bodyParsed.countryName;
               clientData.regionName = bodyParsed.regionName;
@@ -172,14 +226,11 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
               clientData.longitude = bodyParsed.longitude;
               clientData.timeZone = bodyParsed.timeZone;
 
-              var collection = mongodb.get().collection("stockClientData");
-        
-
               // Insert clientData into MongoDB collection. This will display as a history of stock searches on the Stock Application
               collection.insert(clientData, function(err2, docs) {
 
                   if(err2){
-                        console.log(err2); 
+                        console.log(err2);
                   } else{
 
                     // http://mongodb.github.io/node-mongodb-native/2.0/
@@ -190,34 +241,31 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
                     //callback(result);
                   }
                 });
-                      
+
                 collection.count(function(err3, count) {
                   console.log("count = " + count);
                 });
 
 
-                var sort = {'_id': -1};
-                var query = {};
-                var selector = {_id:false};
-                var limit = 10;
-                 
+
+
                 // Locate all the entries using find, but exclude the primary key
                 collection.find(query,selector).sort(sort).limit(limit).toArray(function(err4, results) {
                     // Return back to stock app, to use in the stock history sections
 
                     if(err4){
-                      console.log(err4); 
+                      console.log(err4);
                     } else{
                       res.json(results);
                     }
-                    
+
                 });
 
                 //res.json(clientData);
 
               });
             }).on("error", function(e2){
-              // Return an empty  object 
+              // Return an empty  object
 
               console.log("Got error: " + e2.message);
               console.log(e2);
@@ -228,7 +276,7 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
 
     /* // Using an alternate method through the request module
     var request = require("request");
-     
+
     request("http://api.ipinfodb.com/v3/ip-city/?key=" + key + "&ip=" + clientData.ipAddress + "&format=json", function(error, response, body) {
       console.log(body);
 
@@ -259,13 +307,13 @@ router.get('/api/clientdata/:stockPrice/:stockSymbol', function(req, res, next){
 
 router.get('/api/clientdata', function(req, res, next){
 
-  
+
     var collection = mongodb.get().collection("stockClientData");
     var sort = {'_id': -1};
     var query = {};
     var limit = 10;
 
-  
+
     // Locate all the entries using find, but exclude the primary key
     collection.find(query,{_id:false}).sort(sort).limit(limit).toArray(function(err, results) {
         // Return back to stock app, to use in the stock history sections
